@@ -1,8 +1,13 @@
-# FastAPI entry point
+# app/main.py
+from dotenv import load_dotenv
+load_dotenv()
 from fastapi import FastAPI
-
+from app.routes import upload, query
 app = FastAPI()
 
+app.include_router(upload.router)
+app.include_router(query.router)
+
 @app.get("/")
-def read_root():
-    return {"message": "Welcome to the Dev Doc Assistant API!"}
+def root():
+    return {"message": "RAG running "}
