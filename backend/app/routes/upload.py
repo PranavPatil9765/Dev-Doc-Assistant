@@ -16,6 +16,8 @@ async def upload_file(file: UploadFile):
         shutil.copyfileobj(file.file, buffer)
 
     docs = load_pdf(file_path)
+    for doc in docs:
+        doc.metadata["source"] = file.filename
     chunks = create_chunks(docs)
     embeddings = get_embeddings()
     

@@ -1,6 +1,10 @@
 # app/services/llm_service.py
-from langchain_openai import ChatOpenAI
-llm = ChatOpenAI(temperature=0)
+from langchain_groq import ChatGroq
+
+llm = ChatGroq(
+    model="llama-3.1-8b-instant",
+    temperature=0
+)
 
 def generate_answer(context, query):
     combined_context = "\n".join([doc.page_content for doc in context])
@@ -15,4 +19,5 @@ def generate_answer(context, query):
     {query}
     """
     
-    return llm.predict(prompt)
+    response = llm.invoke(prompt)
+    return response.content

@@ -19,6 +19,14 @@ def query_docs(request: QueryRequest):
         return {"error": "No documents uploaded"}
 
     docs = retrieve_docs(db, request.query)
+    sources = [
+        f"{doc.metadata.get('source', 'unknown')}"
+        for doc in docs
+    ]
+    sources = list(set(sources))
     answer = generate_answer(docs, request.query)
 
-    return {"answer": answer}
+    return {
+    "answer": answer,
+    "sources": sources
+    }
