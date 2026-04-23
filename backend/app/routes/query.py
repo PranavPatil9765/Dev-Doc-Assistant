@@ -20,7 +20,7 @@ def query_docs(request: QueryRequest):
 
     docs = retrieve_docs(db, request.query)
     sources = [
-        f"{doc.metadata.get('source', 'unknown')}"
+        f"{doc.metadata.get('source', 'unknown')} - page {doc.metadata.get('page', 'unknown')}"
         for doc in docs
     ]
     sources = list(set(sources))
