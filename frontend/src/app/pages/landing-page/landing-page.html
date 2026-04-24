@@ -1,0 +1,143 @@
+<div class="min-h-screen bg-gradient-to-br from-black via-slate-900 to-black text-white px-6 py-12 font-sans">
+
+  <!-- HERO -->
+  <section class="flex flex-col items-center text-center max-w-4xl mx-auto">
+
+    <h1 class="text-4xl md:text-6xl font-extrabold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 bg-clip-text text-transparent leading-tight">
+      {{ title() }}
+    </h1>
+
+    <p class="mt-6 text-lg md:text-xl text-gray-300 min-h-[40px]">
+      {{ subtitle() }}
+    </p>
+
+    <p class="mt-6 text-gray-400 leading-relaxed text-base md:text-lg">
+      A developer-focused documentation assistant that allows you to upload any PDF,
+      document file, or source code and interact with it using natural language queries.
+      Instead of manually searching through files, the system retrieves relevant sections
+      and generates precise, context-aware explanations similar to structured documentation.
+    </p>
+
+    <p class="mt-6 text-gray-400 leading-relaxed text-base md:text-lg">
+      The assistant processes your uploaded content, converts it into semantic representations,
+      and enables intelligent querying across the entire dataset. Whether it is API documentation,
+      technical PDFs, or codebases, the system provides answers grounded strictly in your data.
+    </p>
+
+    <!-- BIG CENTER CTA -->
+    <button
+      class="mt-10 px-10 py-5 text-lg md:text-xl rounded-2xl
+             bg-gradient-to-r from-cyan-400 to-purple-600
+             text-black font-bold shadow-2xl
+             hover:scale-110 hover:shadow-cyan-500/30
+             transition-all duration-300"
+      (click)="startSession()"
+    >
+      Start Session
+    </button>
+
+  </section>
+
+  <!-- USE CASES -->
+  <section class="mt-24 max-w-6xl mx-auto">
+    <h2 class="text-3xl md:text-4xl font-bold text-center mb-12
+               bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
+      Capabilities
+    </h2>
+
+    <div class="grid md:grid-cols-3 gap-10">
+
+      <div class="p-8 rounded-2xl bg-white/5 backdrop-blur-lg border border-white/10 hover:scale-105 transition">
+        <h3 class="text-xl md:text-2xl font-semibold text-cyan-400">
+          Document Querying
+        </h3>
+        <p class="text-gray-400 mt-4 leading-relaxed">
+          Upload PDF or document files and query them directly using natural language.
+          The system retrieves relevant sections and generates structured answers based
+          only on the provided content, similar to interacting with dynamic documentation.
+        </p>
+      </div>
+
+      <div class="p-8 rounded-2xl bg-white/5 backdrop-blur-lg border border-white/10 hover:scale-105 transition">
+        <h3 class="text-xl md:text-2xl font-semibold text-purple-400">
+          Code Understanding
+        </h3>
+        <p class="text-gray-400 mt-4 leading-relaxed">
+          Upload source code files and ask questions about logic, functions, or workflows.
+          The assistant explains implementation details, dependencies, and behavior in a
+          structured and developer-friendly format.
+        </p>
+      </div>
+
+      <div class="p-8 rounded-2xl bg-white/5 backdrop-blur-lg border border-white/10 hover:scale-105 transition">
+        <h3 class="text-xl md:text-2xl font-semibold text-blue-400">
+          Context-Aware Answers
+        </h3>
+        <p class="text-gray-400 mt-4 leading-relaxed">
+          All responses are generated using retrieval-augmented generation, ensuring that
+          answers are grounded strictly in the uploaded files. This minimizes hallucination
+          and provides accurate, context-specific explanations.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PRIVACY -->
+  <section class="mt-24 max-w-4xl mx-auto text-center">
+    <h2 class="text-3xl md:text-4xl font-bold mb-8
+               bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
+      Privacy & Session Isolation
+    </h2>
+
+    <p class="text-gray-400 leading-relaxed text-base md:text-lg">
+      All uploaded files are processed within an isolated session. No documents,
+      code, or queries are permanently stored. The system maintains temporary
+      in-memory representations strictly for the duration of the active session.
+    </p>
+
+    <p class="text-gray-400 mt-6 leading-relaxed text-base md:text-lg">
+      Once the session ends, all associated data including embeddings and context
+      is cleared. This guarantees that your files remain private and are never
+      reused across sessions or users.
+    </p>
+
+    <p class="text-gray-400 mt-6 leading-relaxed text-base md:text-lg">
+      This design ensures complete data isolation, making the system suitable for
+      handling sensitive documentation and proprietary codebases.
+    </p>
+  </section>
+
+  <!-- TECH STACK -->
+  <section class="mt-24 max-w-4xl mx-auto text-center">
+    <h2 class="text-3xl md:text-4xl font-bold mb-8
+               bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
+      Technology Stack
+    </h2>
+
+    <p class="text-gray-400 leading-relaxed text-base md:text-lg">
+      Built using Angular Signals for reactive frontend state management and FastAPI
+      for high-performance backend APIs. The system integrates LangGraph for structured
+      agent workflows and a vector database for efficient semantic retrieval.
+    </p>
+
+    <p class="text-gray-400 mt-6 leading-relaxed text-base md:text-lg">
+      Retrieval-Augmented Generation pipelines ensure that every response is derived
+      directly from uploaded content, enabling accurate and reliable documentation-style answers.
+    </p>
+  </section>
+
+  <!-- SOCIAL -->
+  <section class="mt-24 text-center">
+    <h2 class="text-2xl font-semibold mb-6 text-gray-300">
+      Connect
+    </h2>
+
+    <div class="flex flex-wrap justify-center gap-8 text-lg">
+      <a href="#" class="text-cyan-400 hover:text-purple-400 transition">GitHub</a>
+      <a href="#" class="text-cyan-400 hover:text-purple-400 transition">LinkedIn</a>
+      <a href="#" class="text-cyan-400 hover:text-purple-400 transition">Portfolio</a>
+    </div>
+  </section>
+
+</div>
