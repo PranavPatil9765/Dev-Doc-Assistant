@@ -11,8 +11,7 @@ async def stream_answer(context, query) -> AsyncGenerator[str, None]:
     combined_context = "\n".join([doc.page_content for doc in context])
 
     prompt = f"""
-    Answer ONLY using the context.
-    If not found, say "Not found in provided documents".
+    If Answer not found, say "Not found in provided documents".
 
     Context:
     {combined_context}
