@@ -2,3 +2,6 @@
 *venv
 *.pyc
 __pycache__/
+*.angular
+*.vscode
+*package-lock.json
