@@ -4,7 +4,9 @@ load_dotenv()
 from fastapi import FastAPI
 from app.routes import upload, query
 app = FastAPI()
+from app.routes import session
 
+app.include_router(session.router)
 app.include_router(upload.router)
 app.include_router(query.router)
 

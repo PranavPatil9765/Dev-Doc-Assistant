@@ -1,19 +1,29 @@
 # app/routes/upload.py
-from fastapi import APIRouter, UploadFile, File
+from fastapi import APIRouter, UploadFile, File, Query
 from typing import List
 import shutil
 import os
+import time
 
 from app.ingestion.parser import load_pdf
 from app.ingestion.code_parser import parse_code
 from app.services.embedding_service import create_chunks, get_embeddings
 from app.db.vector_store import create_vector_store
+from app.db.session_store import sessions, session_meta
+from app.db.cleanup import cleanup_sessions 
 
 router = APIRouter()
 
 @router.post("/upload")
-async def upload_file(files: List[UploadFile] = File(...)):
-    
+async def upload_file(
+    session_id: str = Query(...), 
+    files: List[UploadFile] = File(...)
+):
+    cleanup_sessions()
+
+    if session_id not in sessions:
+        return {"error": "Invalid session"}
+
     all_docs = []
 
     for file in files:
@@ -54,9 +64,13 @@ async def upload_file(files: List[UploadFile] = File(...)):
     chunks = create_chunks(all_docs)
     embeddings = get_embeddings()
 
-    create_vector_store(chunks, embeddings)
+    db = create_vector_store(chunks, embeddings)
+    sessions[session_id] = db
+
+    session_meta[session_id] = time.time()
 
     return {
         "message": "Files processed successfully",
-        "files_processed": len(files)
+        "files_processed": len(files),
+        "session_id": session_id
     }
