@@ -24,27 +24,35 @@ export class LandingPageComponent {
     private router: Router
   ) {}
 
-  startSession() {
-    this.isLoading.set(true);
+startSession() {
+  const existingSession = sessionStorage.getItem('sessionId');
 
-    this.http.post<{ session_id: string }>('/api/create-session', {})
-      .subscribe({
-        next: (res) => {
-          sessionStorage.setItem('sessionId', res.session_id);
-
-          this.isLoading.set(false);
-
-          this.toast.show('Session created successfully', 'success');
-          // Redirect to chat page
-          this.router.navigate(['/query']);
-        },
-        error: (err) => {
-          this.isLoading.set(false);
-
-          this.toast.show('Failed to create session. Please try again.', 'error');
-
-          console.error('Session creation failed', err);
-        }
-      });
+  if (existingSession) {
+    this.router.navigate(['/query']);
+    return;
   }
+
+
+  this.isLoading.set(true);
+
+  this.http.post<{ session_id: string }>('/api/create-session', {})
+    .subscribe({
+      next: (res) => {
+        sessionStorage.setItem('sessionId', res.session_id);
+
+        this.isLoading.set(false);
+
+        this.toast.show('Session created successfully', 'success');
+
+        this.router.navigate(['/query']);
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+
+        this.toast.show('Failed to create session. Please try again.', 'error');
+
+        console.error('Session creation failed', err);
+      }
+    });
+}
 }

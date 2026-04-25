@@ -1,5 +1,4 @@
-# app/routes/upload.py
-from fastapi import APIRouter, UploadFile, File, Query
+from fastapi import APIRouter, UploadFile, File, Query, HTTPException
 from typing import List
 import shutil
 import os
@@ -22,29 +21,32 @@ async def upload_file(
     cleanup_sessions()
 
     if session_id not in sessions:
-        return {"error": "Invalid session"}
+        raise HTTPException(
+            status_code=404,
+            detail="Invalid or expired session"
+        )
 
     all_docs = []
 
     for file in files:
         file_path = f"temp_{file.filename}"
 
-        # save file
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 
         filename = file.filename or ""
 
         try:
-            # parse
             if filename.endswith(".py"):
                 docs = parse_code(file_path)
             elif filename.endswith(".pdf"):
                 docs = load_pdf(file_path)
             else:
-                continue
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Unsupported file type: {filename}"
+                )
 
-            # metadata
             for doc in docs:
                 doc.metadata = {
                     **doc.metadata,
@@ -59,18 +61,30 @@ async def upload_file(
                 os.remove(file_path)
 
     if not all_docs:
-        return {"error": "No valid files uploaded"}
+        raise HTTPException(
+            status_code=400,
+            detail="No valid files uploaded"
+        )
 
     chunks = create_chunks(all_docs)
 
     if not chunks:
-        return {"error": "No valid content extracted from files"}
-    
+        raise HTTPException(
+            status_code=422,
+            detail="No extractable content found in files"
+        )
+
     embeddings = get_embeddings()
 
-    db = create_vector_store(chunks, embeddings)
-    sessions[session_id] = db
+    try:
+        db = create_vector_store(chunks, embeddings)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Vector store creation failed: {str(e)}"
+        )
 
+    sessions[session_id] = db
     session_meta[session_id] = time.time()
 
     return {
