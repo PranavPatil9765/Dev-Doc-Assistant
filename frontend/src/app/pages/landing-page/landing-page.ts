@@ -1,4 +1,8 @@
-import { Component, signal, effect } from '@angular/core';
+// landing-page.component.ts
+
+import { Component, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { ToastService } from '../../components/toast/toast.service'; // adjust path
 
 @Component({
   selector: 'app-landing-page',
@@ -7,28 +11,37 @@ import { Component, signal, effect } from '@angular/core';
   styleUrls: ['./landing-page.css']
 })
 export class LandingPageComponent {
+
   title = signal('Developer Documentation Assistant');
-  subtitleFull = 'Understand codebases. Debug faster. Build smarter.';
-  subtitle = signal('');
+  subtitle = signal('Query your documents. Understand your code.');
 
-  constructor() {
-    this.typeWriterEffect();
-  }
+  isLoading = signal(false);
 
-  typeWriterEffect() {
-    let i = 0;
-    const interval = setInterval(() => {
-      if (i < this.subtitleFull.length) {
-        this.subtitle.set(this.subtitle() + this.subtitleFull[i]);
-        i++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 40);
-  }
+  constructor(
+    private http: HttpClient,
+    private toast: ToastService
+  ) {}
 
   startSession() {
-    console.log('Session Started');
+    this.isLoading.set(true);
+
+    this.http.post<{ session_id: string }>('/api/create-session', {})
+      .subscribe({
+        next: (res) => {
+          sessionStorage.setItem('sessionId', res.session_id);
+
+          this.isLoading.set(false);
+
+          this.toast.show('Session created successfully', 'success');
+          console.log('Session created with ID:', res.session_id);
+        },
+        error: (err) => {
+          this.isLoading.set(false);
+
+          this.toast.show('Failed to create session. Please try again.', 'error');
+
+          console.error('Session creation failed', err);
+        }
+      });
   }
 }
-

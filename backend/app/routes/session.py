@@ -9,7 +9,7 @@ router = APIRouter()
 
 SESSION_TTL = 1800  # 30 mins
 
-@router.post("/create-session")
+@router.post("/api/create-session")
 def create_session():
     session_id = str(uuid.uuid4())
 
