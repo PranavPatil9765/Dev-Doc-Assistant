@@ -14,7 +14,7 @@ from app.db.cleanup import cleanup_sessions
 
 router = APIRouter()
 
-@router.post("/upload")
+@router.post("/api/upload")
 async def upload_file(
     session_id: str = Query(...), 
     files: List[UploadFile] = File(...)
@@ -62,6 +62,10 @@ async def upload_file(
         return {"error": "No valid files uploaded"}
 
     chunks = create_chunks(all_docs)
+
+    if not chunks:
+        return {"error": "No valid content extracted from files"}
+    
     embeddings = get_embeddings()
 
     db = create_vector_store(chunks, embeddings)

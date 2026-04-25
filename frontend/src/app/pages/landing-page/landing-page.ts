@@ -3,6 +3,7 @@
 import { Component, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ToastService } from '../../components/toast/toast.service'; // adjust path
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-landing-page',
@@ -19,7 +20,8 @@ export class LandingPageComponent {
 
   constructor(
     private http: HttpClient,
-    private toast: ToastService
+    private toast: ToastService,
+    private router: Router
   ) {}
 
   startSession() {
@@ -33,7 +35,8 @@ export class LandingPageComponent {
           this.isLoading.set(false);
 
           this.toast.show('Session created successfully', 'success');
-          console.log('Session created with ID:', res.session_id);
+          // Redirect to chat page
+          this.router.navigate(['/query']);
         },
         error: (err) => {
           this.isLoading.set(false);

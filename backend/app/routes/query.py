@@ -17,7 +17,7 @@ class QueryRequest(BaseModel):
     session_id: str
 
 
-@router.post("/query")
+@router.post("/api/query")
 async def query_docs(request: QueryRequest):
     cleanup_sessions()
 
