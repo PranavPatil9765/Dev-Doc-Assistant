@@ -1,14 +1,16 @@
 [build]
   command = "ng build"
-  publish = "dist/"
+  publish = "dist/frontend/browser"
 
-[[redirects]]
-  from = "/"
-  to = "/index.html"
-  status = 200
-
+# API proxy (keep this first)
 [[redirects]]
   from = "/api/*"
   to = "https://dev-doc-assistant.vercel.app/api/:splat"
   status = 200
   force = true
+
+# Angular routing (must be last)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
