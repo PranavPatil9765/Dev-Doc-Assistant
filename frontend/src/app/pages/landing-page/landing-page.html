@@ -25,16 +25,26 @@
     </p>
 
     <!-- BIG CENTER CTA -->
-    <button
-      class="mt-10 px-10 py-5 text-lg md:text-xl rounded-2xl
-             bg-gradient-to-r from-cyan-400 to-purple-600
-             text-black font-bold shadow-2xl
-             hover:scale-110 hover:shadow-cyan-500/30
-             transition-all duration-300"
-      (click)="startSession()"
-    >
-      Start Session
-    </button>
+   <button
+  class="mt-10 px-10 py-5 text-lg md:text-xl rounded-2xl
+         bg-gradient-to-r from-cyan-400 to-purple-600
+         text-black font-bold shadow-2xl
+         hover:scale-110 hover:shadow-cyan-500/30
+         transition-all duration-300
+         flex items-center justify-center gap-2"
+  (click)="startSession()"
+  [disabled]="isLoading()"
+>
+
+  <!-- Spinner -->
+  @if (isLoading()) {
+    <div class="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+    <span>Starting...</span>
+  } @else {
+    <span>Start Session</span>
+  }
+
+</button>
 
   </section>
 
@@ -134,9 +144,8 @@
     </h2>
 
     <div class="flex flex-wrap justify-center gap-8 text-lg">
-      <a href="#" class="text-cyan-400 hover:text-purple-400 transition">GitHub</a>
-      <a href="#" class="text-cyan-400 hover:text-purple-400 transition">LinkedIn</a>
-      <a href="#" class="text-cyan-400 hover:text-purple-400 transition">Portfolio</a>
+      <a href="https://github.com/PranavPatil9765" target="_blank" class="text-cyan-400 hover:text-purple-400 transition">GitHub</a>
+      <a href="https://www.linkedin.com/in/pranav-patil-87397028b" target="_blank" class="text-cyan-400 hover:text-purple-400 transition">LinkedIn</a>
     </div>
   </section>
 <!-- HOW IT WORKS -->
