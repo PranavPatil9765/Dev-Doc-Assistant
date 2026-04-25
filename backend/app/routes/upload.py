@@ -1,7 +1,5 @@
 from fastapi import APIRouter, UploadFile, File, Query, HTTPException
 from typing import List
-import shutil
-import os
 import time
 
 from app.ingestion.parser import load_pdf
@@ -29,18 +27,13 @@ async def upload_file(
     all_docs = []
 
     for file in files:
-        file_path = f"temp_{file.filename}"
-
-        with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
-
         filename = file.filename or ""
 
         try:
             if filename.endswith(".py"):
-                docs = parse_code(file_path)
+                docs = parse_code(file.file.read().decode("utf-8"))
             elif filename.endswith(".pdf"):
-                docs = load_pdf(file_path)
+                docs = load_pdf(file.file)
             else:
                 raise HTTPException(
                     status_code=400,
@@ -56,9 +49,11 @@ async def upload_file(
 
             all_docs.extend(docs)
 
-        finally:
-            if os.path.exists(file_path):
-                os.remove(file_path)
+        except Exception as e:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Error processing file {filename}: {str(e)}"
+            )
 
     if not all_docs:
         raise HTTPException(
