@@ -1,6 +1,7 @@
-# app/services/embedding_service.py
+import os
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.embeddings import CohereEmbeddings
+
 def create_chunks(documents):
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=500,
@@ -9,4 +10,13 @@ def create_chunks(documents):
     return splitter.split_documents(documents)
 
 def get_embeddings():
-     return HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+    cohere_api_key = os.getenv("COHERE_API_KEY")
+
+    if not cohere_api_key:
+        raise ValueError("COHERE_API_KEY not found in environment variables")
+
+    return CohereEmbeddings(
+        model="embed-english-v3.0",
+        cohere_api_key=cohere_api_key,
+        user_agent="my-app" 
+    )
