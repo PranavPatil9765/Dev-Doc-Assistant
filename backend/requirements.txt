@@ -6,3 +6,4 @@ langchain_groq==1.1.2
 langchain_text_splitters==1.1.2
 pydantic==2.13.3
 python-dotenv==1.2.2
+gunicorn==20.1.0
