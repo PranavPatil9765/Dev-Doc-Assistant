@@ -31,7 +31,7 @@ async def query_docs(request: QueryRequest):
 
     session_meta[request.session_id] = time.time()
 
-    docs = retrieve_docs(db, request.query)
+    docs = retrieve_docs(db, request.query, request.session_id)
 
     return StreamingResponse(
         stream_answer(docs, request.query),

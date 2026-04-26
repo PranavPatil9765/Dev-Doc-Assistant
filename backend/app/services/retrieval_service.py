@@ -2,7 +2,7 @@
 from langchain_cohere import CohereEmbeddings
 import os
 
-def retrieve_docs(db, query, k=3):
+def retrieve_docs(db, query, namespace, k=3):
     # db is now a Pinecone Index object
     cohere_api_key = os.getenv("COHERE_API_KEY")
     embeddings = CohereEmbeddings( # type: ignore
@@ -11,13 +11,13 @@ def retrieve_docs(db, query, k=3):
         user_agent="my-app"
     )
     
-    # Query the index
+    # Query the index - use session-specific namespace for isolation
     query_embedding = embeddings.embed_query(query)
     results = db.query(
         vector=query_embedding,
         top_k=k,
         include_metadata=True,
-        namespace="default"
+        namespace=namespace
     )
     
     # Convert results to documents-like format

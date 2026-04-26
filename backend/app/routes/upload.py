@@ -72,7 +72,7 @@ async def upload_file(
     embeddings = get_embeddings()
 
     try:
-        db = create_vector_store(chunks, embeddings)
+        db = create_vector_store(chunks, embeddings, session_id)
     except Exception as e:
         raise HTTPException(
             status_code=500,

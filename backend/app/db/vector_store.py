@@ -5,7 +5,7 @@ import uuid
 
 db = None
 
-def create_vector_store(chunks, embeddings):
+def create_vector_store(chunks, embeddings, namespace):
     global db
     api_key = os.getenv("PINECONE_API_KEY")
     index_name = os.getenv("PINECONE_INDEX_NAME", "rag-index")
@@ -47,8 +47,8 @@ def create_vector_store(chunks, embeddings):
                 }
             })
         
-        # Upsert in batches
-        index.upsert(vectors=records, namespace="default")
+        # Upsert in batches - use session_id as namespace for isolation
+        index.upsert(vectors=records, namespace=namespace)
     
     # Store index reference for similarity search
     db = index
