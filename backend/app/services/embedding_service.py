@@ -1,6 +1,6 @@
 import os
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import CohereEmbeddings
+from langchain_cohere import CohereEmbeddings
 
 def create_chunks(documents):
     splitter = RecursiveCharacterTextSplitter(
@@ -15,7 +15,7 @@ def get_embeddings():
     if not cohere_api_key:
         raise ValueError("COHERE_API_KEY not found in environment variables")
 
-    return CohereEmbeddings(
+    return CohereEmbeddings(  # type: ignore
         model="embed-english-v3.0",
         cohere_api_key=cohere_api_key,
         user_agent="my-app" 
