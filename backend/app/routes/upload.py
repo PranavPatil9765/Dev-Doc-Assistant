@@ -23,7 +23,7 @@ CODE_EXTENSIONS = {
 }
 
 
-def get_file_loader(filename: str, content: bytes):
+def get_file_loader(filename: str, content):
     """Determine the appropriate loader based on file extension."""
     ext = os.path.splitext(filename)[1].lower()
     
@@ -71,6 +71,7 @@ async def upload_file(
             if file_type == "code":
                 docs = loader(content.decode("utf-8"))
             else:
+                # pdf, text, docx all accept bytes
                 docs = loader(content)
             
             for doc in docs:
