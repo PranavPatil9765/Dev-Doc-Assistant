@@ -1,3 +1,35 @@
 # app/services/retrieval_service.py
+from langchain_cohere import CohereEmbeddings
+import os
+
 def retrieve_docs(db, query, k=3):
-    return db.similarity_search(query, k=k)
+    # db is now a Pinecone Index object
+    cohere_api_key = os.getenv("COHERE_API_KEY")
+    embeddings = CohereEmbeddings(
+        model="embed-english-v3.0",
+        cohere_api_key=cohere_api_key,
+        user_agent="my-app"
+    )
+    
+    # Query the index
+    query_embedding = embeddings.embed_query(query)
+    results = db.query(
+        vector=query_embedding,
+        top_k=k,
+        include_metadata=True,
+        namespace="default"
+    )
+    
+    # Convert results to documents-like format
+    from langchain.schema import Document
+    docs = []
+    for match in results.matches:
+        docs.append(Document(
+            page_content=match.metadata.get("text", ""),
+            metadata={
+                "source": match.metadata.get("source", "unknown"),
+                "page": match.metadata.get("page", "unknown")
+            }
+        ))
+    
+    return docs

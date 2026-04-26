@@ -1,7 +1,7 @@
 # app/db/vector_store.py
-from langchain_pinecone import PineconeVectorStore
 from pinecone import Pinecone, ServerlessSpec
 import os
+import uuid
 
 db = None
 
@@ -27,16 +27,29 @@ def create_vector_store(chunks, embeddings):
             )
         )
     
-    # Get the existing index and create vector store from it
     index = pc.Index(index_name)
-    db = PineconeVectorStore(
-        index=index,
-        embedding=embeddings,
-        text_key="text"
-    )
     
-    # Add documents if chunks provided
+    # Manually embed and upsert documents
     if chunks:
-        db.add_documents(chunks)
+        records = []
+        for i, chunk in enumerate(chunks):
+            # Get embedding for the chunk content
+            text = chunk.page_content
+            embedding = embeddings.embed_query(text)
+            
+            records.append({
+                "id": str(uuid.uuid4()),
+                "values": embedding,
+                "metadata": {
+                    "text": text,
+                    "source": chunk.metadata.get("source", "unknown"),
+                    "page": chunk.metadata.get("page", "unknown")
+                }
+            })
+        
+        # Upsert in batches
+        index.upsert(vectors=records, namespace="default")
     
+    # Store index reference for similarity search
+    db = index
     return db
