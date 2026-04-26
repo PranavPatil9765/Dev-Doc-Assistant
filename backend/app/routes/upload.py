@@ -1,8 +1,9 @@
 from fastapi import APIRouter, UploadFile, File, Query, HTTPException
 from typing import List
 import time
+import os
 
-from app.ingestion.parser import load_pdf
+from app.ingestion.parser import load_pdf, load_text, load_docx
 from app.ingestion.code_parser import parse_code
 from app.services.embedding_service import create_chunks, get_embeddings
 from app.db.vector_store import create_vector_store
@@ -10,6 +11,33 @@ from app.db.session_store import sessions, session_meta
 from app.db.cleanup import cleanup_sessions 
 
 router = APIRouter()
+
+# File type mappings
+TEXT_EXTENSIONS = {".txt", ".md", ".markdown"}
+DOCX_EXTENSIONS = {".docx"}
+CODE_EXTENSIONS = {
+    ".py", ".js", ".ts", ".jsx", ".tsx", ".java", ".cpp", ".c", ".h",
+    ".go", ".rs", ".rb", ".php", ".swift", ".kt", ".scala", ".sh",
+    ".bash", ".zsh", ".sql", ".html", ".css", ".scss", ".json", ".yaml",
+    ".yml", ".xml", ".toml", ".ini", ".cfg"
+}
+
+
+def get_file_loader(filename: str, content: bytes):
+    """Determine the appropriate loader based on file extension."""
+    ext = os.path.splitext(filename)[1].lower()
+    
+    if ext == ".pdf":
+        return load_pdf, "pdf"
+    elif ext in TEXT_EXTENSIONS:
+        return load_text, "text"
+    elif ext in DOCX_EXTENSIONS:
+        return load_docx, "docx"
+    elif ext in CODE_EXTENSIONS:
+        return parse_code, "code"
+    else:
+        return None, None
+
 
 @router.post("/api/upload")
 async def upload_file(
@@ -30,16 +58,21 @@ async def upload_file(
         filename = file.filename or ""
 
         try:
-            if filename.endswith(".py"):
-                docs = parse_code(file.file.read().decode("utf-8"))
-            elif filename.endswith(".pdf"):
-                docs = load_pdf(file.file)
-            else:
+            content = file.file.read()
+            
+            loader, file_type = get_file_loader(filename, content)
+            
+            if loader is None:
                 raise HTTPException(
                     status_code=400,
                     detail=f"Unsupported file type: {filename}"
                 )
-
+            
+            if file_type == "code":
+                docs = loader(content.decode("utf-8"))
+            else:
+                docs = loader(content)
+            
             for doc in docs:
                 doc.metadata = {
                     **doc.metadata,
@@ -49,6 +82,8 @@ async def upload_file(
 
             all_docs.extend(docs)
 
+        except HTTPException:
+            raise
         except Exception as e:
             raise HTTPException(
                 status_code=500,
