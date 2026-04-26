@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "https://dev-doc-assistant.vercel.app",
+    "target": "http://dev-doc-assistant.vercel.app",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"
