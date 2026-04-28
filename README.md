@@ -1,4 +1,6 @@
 # Dev Doc Assistant
+#
+**Live Demo:** [https://dev-doc-assistant.netlify.app/](https://dev-doc-assistant.netlify.app/)
 
 Dev Doc Assistant is a developer-focused documentation assistant that allows you to upload any PDF, document file, or source code and interact with it using natural language queries. Instead of manually searching through files, the system retrieves relevant sections and generates precise, context-aware explanations similar to structured documentation.
 
